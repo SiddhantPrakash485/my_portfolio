@@ -1,38 +1,25 @@
-import express from 'express';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+// If you are not using ES Modules, use this instead: 
+// const { Resend } = require('resend');
 
-const router = express.Router();
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-router.post('/', async (req, res) => {
+app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
-  
-  if (!name || !email || !message) {
-    return res.status(400).json({ error: 'All fields are required.' });
-  }
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: process.env.EMAIL_USER, // Sends the message to yourself
-    replyTo: email, // Hitting 'reply' will reply to the recruiter
-    subject: `Portfolio Contact from ${name}`,
-    text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-  };
 
   try {
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ success: 'Message sent successfully!' });
+    const data = await resend.emails.send({
+      // You MUST use this exact 'from' address on the free tier
+      from: 'Acme <onboarding@resend.dev>', 
+      // Put your actual Gmail address here to receive the messages
+      to: ['siddhantprakash262@gmail.com'], 
+      subject: `New Portfolio Message from ${name}`,
+      text: `Name: ${name}\nVisitor Email: ${email}\n\nMessage:\n${message}`,
+    });
+
+    res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('Email error:', error);
-    res.status(500).json({ error: 'Failed to send message.' });
+    console.error("Resend Error:", error);
+    res.status(500).json({ error: 'Failed to send message' });
   }
 });
-
-export default router; // Replaces module.exports
