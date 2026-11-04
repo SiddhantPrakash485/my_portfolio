@@ -26,5 +26,11 @@ A dynamic, multi-page personal portfolio built to showcase projects, education, 
    ```env
    PORT=5000
    ALLOWED_ORIGIN=http://localhost:5173
-   EMAIL_USER=your.email@gmail.com
-   EMAIL_PASS=your_16_letter_app_password
+   RESEND_API_KEY=your api key
+
+# My Portfolio
+
+🚀 **Live Demo:** [https://my-portfolio-qety.vercel.app/](https://my-portfolio-qety.vercel.app/)
+
+## Overview
+A full-stack React portfolio built with Vite, Tailwind CSS, and a Node.js/Express backend that securely routes contact form messages via the Resend API.
